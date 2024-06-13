@@ -505,8 +505,6 @@ menu.keybindings = {
     { key = 'e', fn = menu:with_update { subs_observer.set_manual_timing, 'end' } },
     { key = 'c', fn = menu:with_update { subs_observer.set_to_current_sub } },
     { key = 'r', fn = menu:with_update { subs_observer.clear_and_notify } },
-    { key = 'g', fn = menu:with_update { export_to_anki, true } },
-    { key = 'n', fn = menu:with_update { export_to_anki, false } },
     { key = 'm', fn = menu:with_update { update_last_note, false } },
     { key = 'M', fn = menu:with_update { update_last_note, true } },
     { key = 'f', fn = menu:with_update { function()
@@ -730,11 +728,11 @@ local main = (function()
 
         -- Secondary subtitles
         mp.add_key_binding("Ctrl+v", "mpvacious-secondary-sid-toggle", secondary_sid.change_visibility)
-        mp.add_key_binding("Ctrl+k", "mpvacious-secondary-sid-prev", secondary_sid.select_previous)
-        mp.add_key_binding("Ctrl+j", "mpvacious-secondary-sid-next", secondary_sid.select_next)
+        mp.add_key_binding("Ctrl+h", "mpvacious-secondary-sid-prev", secondary_sid.select_previous)
+        mp.add_key_binding("Ctrl+l", "mpvacious-secondary-sid-next", secondary_sid.select_next)
 
         -- Open advanced menu
-        mp.add_key_binding("a", "mpvacious-menu-open", function()
+        mp.add_key_binding("Ctrl+a", "mpvacious-menu-open", function()
             menu:open()
         end)
 
@@ -763,7 +761,7 @@ local main = (function()
         mp.add_key_binding("Ctrl+H", "mpvacious-sub-replay", _ { play_control.play_till_sub_end })
         mp.add_key_binding("Ctrl+L", "mpvacious-sub-play-up-to-next", _ { play_control.play_till_next_sub_end })
 
-        mp.msg.warn("Press 'a' to open the mpvacious menu.")
+        mp.msg.warn("Press 'Ctrl+a' to open the mpvacious menu.")
     end
 end)()
 
