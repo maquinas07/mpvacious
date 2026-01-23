@@ -45,6 +45,7 @@ local function alt_path_dirs()
     return {
         '/opt/homebrew/bin',
         '/usr/local/bin',
+        '/Applications/mpv.app/Contents/MacOS',
         utils.join_path(os.getenv("HOME") or "~", '.local/bin'),
     }
 end
