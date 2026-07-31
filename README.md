@@ -1,20 +1,23 @@
-<p align="center">
-<img src="https://user-images.githubusercontent.com/69171671/117440218-4ae26800-af23-11eb-87b4-1d9026fc953f.png"/>
-</p>
+[![AUR](https://img.shields.io/badge/AUR-install-blue?style=for-the-badge&logo=ArchLinux)](https://aur.archlinux.org/packages/mpv-mpvacious/)
+[![Chat](https://img.shields.io/badge/chat-join-green?style=for-the-badge&logo=Telegram&logoColor=green)](https://ajatt.top/blog/join-our-community.html)
+[![Support](https://img.shields.io/badge/support-developer-orange?style=for-the-badge&logo=Patreon&logoColor=orange)](https://ajatt.top/blog/donating-to-tatsumoto.html)
+
+https://github.com/user-attachments/assets/466d1aa7-c7d1-4ea2-a296-0835d3700962
 
 # mpvacious
 
-[![AUR](https://img.shields.io/badge/AUR-install-blue.svg)](https://aur.archlinux.org/packages/mpv-mpvacious/)
-[![Chat](https://img.shields.io/badge/chat-join-green.svg)](https://tatsumoto-ren.github.io/blog/join-our-community.html)
-![GitHub](https://img.shields.io/github/license/Ajatt-Tools/mpvacious)
-[![Donate](https://img.shields.io/badge/support-developer-orange)](https://tatsumoto.neocities.org/blog/donating-to-tatsumoto.html)
+Mpvacious is a user script for [mpv](https://wiki.archlinux.org/title/Mpv)
+that offers utilities for creating and modifying Anki flashcards from movies and TV shows.
+It allows you to select subtitle lines, create audio clips and images, and send them to Anki.
+The script supports secondary subtitles, configurable media formats, and customizable keyboard bindings.
+Mpvacious works best with [Goldendict-ng](https://xiaoyifang.github.io/goldendict-ng/) or [Rikaitan](https://rikaitan.ajatt.top/).
+Watch a [📽️ video demonstration](https://ajatt.top/blog/vid/sentence_mining_with_mpvacious.mp4).
 
-mpvacious is your semi-automatic subs2srs for mpv.
-It supports multiple workflows and allows you to quickly create Anki cards
-while watching your favorite TV show.
-**[Video demonstration](https://redirect.invidious.io/watch?v=vU85ramvyo4)**.
+✨ Ajatt-Tools is looking for **[new contributors](#contributing)**!
 
 ## Requirements
+
+You need to install some third-party programs before you install mpvacious.
 
 <table>
 <tr>
@@ -27,7 +30,7 @@ while watching your favorite TV show.
     <td><a href="https://wiki.archlinux.org/index.php/Mpv">mpv</a></td>
     <td><a href="https://sourceforge.net/projects/mpv-player-windows/files">mpv</a></td>
     <td><a href="https://mpv.io/installation/">mpv</a></td>
-    <td>v0.32.0 or newer.</td>
+    <td>mpvacious is a user-script for mpv. Get mpv v0.41.0 or newer.</td>
 </tr>
 <tr>
     <td><a href="https://wiki.archlinux.org/index.php/Anki">Anki</a></td>
@@ -55,7 +58,8 @@ Install all dependencies at once (on [Arch-based](https://www.parabola.nu/)
 [distros](https://www.gnu.org/distros/free-distros.en.html)):
 
 ```
-$ sudo pacman -Syu mpv anki curl xclip --needed
+sudo pacman -Syu mpv curl xclip --needed
+trizen -S anki
 ```
 
 ## Prerequisites
@@ -81,49 +85,114 @@ $ sudo pacman -Syu mpv anki curl xclip --needed
 ## Installation
 
 There are multiple ways you can install `mpvacious`.
-I recommend installing with `git` so that you can easily update on demand.
 
-`mpvacious` is a user-script for mpv,
-so it has to be installed in the directory `mpv` reads its user-scripts from.
-
-| OS        | Location                                         |
-|-----------|--------------------------------------------------|
-| GNU/Linux | `~/.config/mpv/scripts/`                         |
-| Windows   | `C:/Users/Username/AppData/Roaming/mpv/scripts/` |
-
+We recommend using GNU/Linux.
 Windows is not recommended,
 but we acknowledge that some people haven't switched to GNU/Linux yet.
-
-### Using git
-
-Clone the repo to the `scripts` directory.
-
-```
-mkdir -p ~/.config/mpv/scripts/
-git clone 'https://github.com/Ajatt-Tools/mpvacious.git' ~/.config/mpv/scripts/subs2srs
-```
-
-To update, run the following command.
-
-```
-cd ~/.config/mpv/scripts/subs2srs && git pull
-```
 
 ### From the AUR
 
 `mpvacious` can be installed with the [mpv-mpvacious](https://aur.archlinux.org/packages/mpv-mpvacious/) package.
+This method will install mpvacious to `/etc/mpv`.
+
+### Using Bash on GNU/Linux and macOS
+
+*Requires `curl` and `unzip`.*
+
+Run [install.sh](scripts/install.sh) with this command:
+
+```sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Ajatt-Tools/mpvacious/HEAD/scripts/install.sh)"
+```
+
+On GNU/Linux, we try to detect what package manager variant of the config location you're using, with precedent being:
+
+```
+~/.var/app/io.mpv.Mpv     (flatpak)
+~/snap/mpv
+~/snap/mpv-wayland
+~/.config/mpv
+```
+
+To install into any of these locations, make sure the ones above it don't exist.
+
+### Using Powershell on Windows
+
+Open [Powershell](https://learn.microsoft.com/en-us/powershell/).
+
+*Optional, needed to run a remote script the first time if not enabled already:*
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+Run [install.ps1](scripts/install.ps1) with this command:
+
+```powershell
+irm https://raw.githubusercontent.com/Ajatt-Tools/mpvacious/HEAD/scripts/install.ps1 | iex
+```
+
+**NOTE**: If this command is run in an mpv installation directory with `portable_config`,
+it'll install there instead of `AppData`.
+
+### Development mode - Using git
+
+Installing Mpvacious in development mode allows contributors to easily test their changes.
+With this setup, any changes made to the *.lua files will be applied immediately after restarting mpv.
+
+#### First approach
+
+Clone the repository, then create a symlink from the `mpvacious` directory to the mpv config directory.
+
+Commands for GNU/Linux:
+
+```bash
+git clone 'https://github.com/Ajatt-Tools/mpvacious.git'
+mkdir -p ~/.config/mpv/scripts/
+cd mpvacious
+bash scripts/symlink.sh
+```
+
+To update an existing installation, use `git` in the project folder.
+
+```bash
+git pull
+```
+
+#### Second approach
+
+Clone the repo directly into the `mpv/scripts` directory.
+
+Commands for GNU/Linux:
+
+```bash
+mkdir -p ~/.config/mpv/scripts/
+git clone 'https://github.com/Ajatt-Tools/mpvacious.git' ~/.config/mpv/scripts/mpvacious
+```
+
+To update an existing installation, use `git`.
+
+```
+cd ~/.config/mpv/scripts/mpvacious && git pull
+```
 
 ### Manually
 
 This way is not recommended because it's easy to make a mistake during the process
-and end up with a broken install.
+and end up with a broken installation.
+
+`mpvacious` is a user-script for mpv,
+so it has to be installed in the directory `mpv` reads its user-scripts from.
+
+| OS                 | Location                                         |
+|--------------------|--------------------------------------------------|
+| GNU/Linux or macos | `~/.config/mpv/scripts/`                         |
+| Windows            | `C:/Users/Username/AppData/Roaming/mpv/scripts/` |
 
 Download
-[the repository](https://github.com/Ajatt-Tools/mpvacious/archive/refs/heads/master.zip)
-or
 [the latest release](https://github.com/Ajatt-Tools/mpvacious/releases)
-and extract the folder containing
-[subs2srs.lua](https://raw.githubusercontent.com/Ajatt-Tools/mpvacious/master/subs2srs.lua)
+or [the master branch](https://github.com/Ajatt-Tools/mpvacious/archive/refs/heads/master.zip)
+for a development version, and extract the "mpvacious" folder
 to your [mpv scripts](https://github.com/mpv-player/mpv/wiki/User-Scripts) directory.
 
 <details>
@@ -134,9 +203,9 @@ to your [mpv scripts](https://github.com/mpv-player/mpv/wiki/User-Scripts) direc
 ~/.config/mpv/scripts
 |-- other script 1
 |-- other script 2
-|-- subs2srs
+|-- mpvacious
 |   |-- main.lua
-|   |-- subs2srs.lua
+|   |-- helpers.lua
 |   `-- other files
 `-- other script 3
 ```
@@ -153,17 +222,23 @@ You need to tell mpv where to look for `mpvacious`.
 Open or create  `~/.config/mpv/scripts/modules.lua` and add these lines:
 ```
 local mpv_scripts_dir_path = os.getenv("HOME") ..  "/.config/mpv/scripts/"
-package.path = package.path .. ';' .. os.getenv("HOME") .. '/.config/mpv/scripts/subs2srs/?.lua'
+package.path = package.path .. ';' .. os.getenv("HOME") .. '/.config/mpv/scripts/mpvacious/?.lua'
 function load(relative_path) dofile(mpv_scripts_dir_path .. relative_path) end
-load("subs2srs/subs2srs.lua")
+load("mpvacious/main.lua")
 ```
 
 </details>
 
-**Note:** in [Celluloid](https://www.archlinux.org/packages/community/x86_64/celluloid/)
+<details>
+
+<summary>A note for Celluloid</summary>
+
+In [Celluloid](https://www.archlinux.org/packages/community/x86_64/celluloid/)
 user scripts are installed in `/.config/celluloid/scripts/`.
 When following the instructions above, replace `.config/mpv` with `.config/celluloid`
-and optionally `subs2srs` with the name of the folder mpvacious is cloned into.
+and optionally `mpvacious` with the name of the folder mpvacious is cloned into.
+
+</details>
 
 ## Configuration
 
@@ -173,14 +248,14 @@ The config file should be created by the user, if needed.
 |--------------------|-------------------------------------------------------------------|
 | GNU/Linux          | `~/.config/mpv/script-opts/subs2srs.conf`                         |
 | Windows            | `C:/Users/Username/AppData/Roaming/mpv/script-opts/subs2srs.conf` |
-| Windows (portable) | `mpv.exeフォルダ/portable_config/script-opts/subs2srs.conf`           |
+| Windows (portable) | `mpv.exe folder/portable_config/script-opts/subs2srs.conf`        |
 
 If a parameter is not specified
 in the config file, the default value will be used.
 mpv doesn't tolerate spaces before and after `=`.
 
 <p align="center">
-  <a href="https://github.com/Ajatt-Tools/mpvacious/blob/master/.github/RELEASE/subs2srs.conf">Example configuration file</a>
+  <a href="mpvacious/config/default_config.conf">Example configuration file</a>
 </p>
 
 If the first field is empty, it will be set contain the string `[empty]`.
@@ -200,7 +275,7 @@ as they greatly reduce the size of the generated files.
 
 If you still use AnkiMobile (the [proprietary](https://www.gnu.org/proprietary/) Anki app),
 set `opus_container` to `m4a` or `webm`. I'll allow iOS to play Opus files, while still maintaining
-compatibility with non-Apple devices. For really old iOS devices, set `opus_container` to
+compatibility with non-Apple devices. For ancient iOS devices, set `opus_container` to
 [`caf`](https://en.wikipedia.org/wiki/Core_Audio_Format). CAF plays only on Anki Desktop,
 AnkiWeb in Safari and AnkiMobile, and is really not recommended. (Please note that
 [Lockdown Mode](https://support.apple.com/en-us/105120) completely disables Opus and AVIF support,
@@ -209,7 +284,7 @@ though you may try to add an exception for AnkiMobile.)
 If no matter what mpvacious fails to create audio clips and/or snapshots,
 change `use_ffmpeg` to `yes`.
 By using ffmpeg instead of the encoder built in mpv you can work around most encoder issues.
-You need to have ffmpeg installed for this to work.
+You need to have `ffmpeg` installed for this to work.
 
 ### Key bindings
 
@@ -260,7 +335,7 @@ Ctrl+j       script-binding mpvacious-secondary-sid-next
 
 **Note:** A capital letter means that you need to press Shift in order to activate the corresponding binding.
 For example, <kbd>Ctrl+M</kbd> actually means <kbd>Ctrl+Shift+m</kbd>.
-mpv accepts both variants in `input.conf`.
+`mpv` accepts both variants in `input.conf`.
 
 ## Usage
 
@@ -328,16 +403,23 @@ and the target sentence doesn't span multiple subs.
 
 Advanced menu has the following options:
 
-* <kbd>f</kbd> - Increment number of cards to update. Only affects note updating, including quick card creation. The number of cards to update is reset to 1 upon updating a note.
+* <kbd>i</kbd> - Cycle between display modes.
+* <kbd>v</kbd> - Open subtitle selection menu. Upon exit, this menu exports selected subtitles into Advanced menu.
+
+* <kbd>f</kbd> - Increment number of cards to update.
+  Only affects note updating, including quick card creation.
+  The number of cards to update is reset to 1 upon updating a note.
 * <kbd>shift+f</kbd> - Decrement number of cards to update.
 
 * <kbd>c</kbd> - Interactive subtitle selection.
   The range of the currently displayed subtitle line is selected. The selection then grows both ways based on the following displayed lines.
   It does nothing if there are no subs on screen.
 
-* <kbd>shift+s</kbd> - Set the start time to the current sub. The selection then grows forward based on the following displayed lines.
+* <kbd>shift+s</kbd> - Set the start time to the current sub.
+  The selection then grows forward based on the following displayed lines.
   The default selection spans across the range of the currently displayed subtitle line.
-* <kbd>shift+e</kbd> - Set the end time to the current sub. The selection then grows backward based on the following displayed lines.
+* <kbd>shift+e</kbd> - Set the end time to the current sub.
+  The selection then grows backward based on the following displayed lines.
   The default selection spans across the range of the currently displayed subtitle line.
 
 Then seek with <kbd>Shift+h</kbd> and <kbd>Shift+l</kbd> to the previous/next line that you want to add.
@@ -348,29 +430,50 @@ Press <kbd>n</kbd> to make the card.
 * <kbd>z</kbd> and <kbd>Shift+z</kbd> - Adjust subtitle delay.
 
 If above fails, you have to manually set timings.
-* <kbd>s</kbd> - Set the start time. The selection then grows forward based on the following displayed lines.
-The default selection spans across the selected start point and the end of the subtitle line.
-* <kbd>e</kbd> - Set the end time. The selection then grows backward based on the following displayed lines.
-The default selection spans across the selected end point and the start of the subtitle line.
+
+* <kbd>s</kbd> - Set the start time.
+  The selection then grows forward based on the following displayed lines.
+  The default selection spans across the selected start point and the end of the subtitle line.
+* <kbd>e</kbd> - Set the end time.
+  The selection then grows backward based on the following displayed lines.
+  The default selection spans across the selected end point and the start of the subtitle line.
 
 Then, as earlier, press <kbd>n</kbd> to make the card.
 
 Alternatively:
+
 * <kbd>m</kbd> to update the last card(s). (<kbd>Shift+m</kbd> to overwrite)
 * <kbd>b</kbd> to update the selected card(s). (<kbd>Shift+b</kbd> to overwrite)
 
 **Tip**: change playback speed by pressing <kbd>[</kbd> and <kbd>]</kbd>
 to precisely mark start and end of the phrase.
 
+### New Note Timer
+
+The **new note timer** feature allows mpvacious to automatically detect and update new Anki notes
+without manual intervention. When enabled, mpvacious will periodically check for new notes
+and automatically add media (audio and images) to them if they match your configured note type.
+
+To enable this feature, set `enable_new_note_timer=yes`,
+and assign `model_name` and `deck_name`
+in your [config file](mpvacious/config/default_config.conf).
+You can adjust how often mpvacious checks for new notes with the `new_note_timer_interval_seconds` setting.
+
+When this feature is enabled, you no longer need to manually press "m" to update notes
+that were created externally (e.g., with GoldenDict or Rikaitan). The process happens automatically
+in the background.
+
 ### My subtitles are not in sync
 
-If subs are badly timed, first, you could try to re-time them.
-Read [Retiming subtitles](https://tatsumoto.neocities.org/blog/retiming-subtitles).
-Or shift timings using key bindings provided by mpv (usually <kbd>z</kbd> and <kbd>Shift+z</kbd>).
+If subs are badly timed, first, you can shift timings
+using key bindings provided by mpv (usually <kbd>z</kbd> and <kbd>Shift+z</kbd>).
+
+Alternatively, try to re-time subtitles.
+Read [Retiming subtitles](https://tatsumoto.neocities.org/blog/retiming-subtitles) for details.
 
 ### Example sentence card
 
-With the addon you can make cards like this in just a few seconds.
+With mpvacious you can make cards like this in just a few seconds.
 
 ![card-example](https://user-images.githubusercontent.com/69171671/92900057-e102d480-f40e-11ea-8cfc-b00848ca66ff.png)
 
@@ -407,19 +510,21 @@ By pressing <kbd>Ctrl</kbd>+<kbd>v</kbd> you can control secondary sid visibilit
 
 ### Other tools
 
-If you don't like the default Rikaitan Search tool, try:
+If you don't like the default *Rikaitan Search* tool, try:
 
+* [GoldenDict](howto/goldendict.md)
 * Clipboard Inserter browser add-on
 ([chrome](https://chrome.google.com/webstore/detail/clipboard-inserter/deahejllghicakhplliloeheabddjajm))
 ([firefox](https://addons.mozilla.org/ja/firefox/addon/clipboard-inserter/))
-* A html page ([1](https://pastebin.com/zDY6s3NK)) ([2](https://pastebin.com/hZ4sawL4))
+* An HTML page ([1](https://pastebin.com/zDY6s3NK)) ([2](https://pastebin.com/hZ4sawL4))
 to paste the contents of your clipboard to
 
-You can use any html page as long as it has \<body\>\</body\> in it.
+You can use any HTML page as long as it has \<body\>\</body\> in it.
 
 ### Additional mpv key bindings
 
 I recommend adding these lines to your [input.conf](#key-bindings) for smoother experience.
+
 ```
 # vim-like seeking
 l seek 5
@@ -439,6 +544,8 @@ z add sub-delay -0.05
 X sub-step 1
 x sub-step -1
 ```
+
+For example, check out [my input.conf file](https://github.com/tatsumoto-ren/dotfiles/blob/main/.config/mpv/input.conf).
 
 ## Profiles
 
@@ -474,13 +581,81 @@ Specify only the ones you want to be different from the default.
 To cycle profiles, open the advanced menu by pressing <kbd>a</kbd> and then press <kbd>p</kbd>.
 At any time you can see what profile is active in the menu's status bar.
 
+## Contributing
+
+Since Ajatt-Tools is a distributed effort, we **highly welcome new contributors**!
+
+Install the project in development mode to easily test and commit your changes.
+
+Try these libre code editors with [lua](https://wiki.archlinux.org/title/Lua) support:
+
+- [pycharm-community-edition](https://archlinux.org/packages/?name=pycharm-community-edition) with [emmylua](https://emmylua.github.io/installation.html)
+- [vscodium](https://aur.archlinux.org/packages/vscodium) with [sumneko.lua](https://open-vsx.org/extension/sumneko/lua)
+
+Make sure to use an automatic code formatter.
+Also see: [Running tests](#running-tests).
+
 ## Running tests
+
+The fastest way to run tests is with Lua or `luajit` directly (no mpv or media file required):
+
+```bash
+lua tests/run.lua
+luajit tests/run.lua
+```
+
+Alternatively, tests can be run inside mpv (requires a media file to trigger script loading):
 
 ```bash
 MPVACIOUS_TEST=TRUE mpv 'path/to/some/file.mkv'
 ```
 
 The results will be printed to the console.
+
+## Custom Subtitle Filtering
+
+While the default subtitle processing in `mpvacious` is sufficient for most users, you can define custom logic to handle specific needs, such as filtering bilingual subtitles.
+
+### Setup
+
+To use this feature, create the following directory and an **empty `main.lua**` file (required to prevent `mpv` from reporting a plugin error):
+
+| OS                 | Plugin Location                                                                   |
+| ------------------ | --------------------------------------------------------------------------------- |
+| GNU/Linux          | `~/.config/mpv/scripts/mpvacious_custom_subtitle_filter/`                         |
+| Windows            | `C:/Users/Username/AppData/Roaming/mpv/scripts/mpvacious_custom_subtitle_filter/` |
+| Windows (portable) | `mpv.exe folder/portable_config/scripts/mpvacious_custom_subtitle_filter/`        |
+
+**Structure:**
+
+```text
+mpvacious_custom_subtitle_filter/
+├── main.lua                   # Empty file to satisfy mpv
+└── custom_subtitle_filter.lua # Your custom logic
+```
+
+### How it Works
+
+`mpvacious` will automatically load `custom_subtitle_filter.lua` and look for these exported functions:
+
+* **`preprocess(text)`**: The primary function for filtering or reformatting raw subtitles.
+* **`trim(text)`**: Overrides the internal trimmer. Note that internal trimming must be enabled via `clipboard_trim_enabled=yes` in `subs2srs.conf`.
+* **`init(config)`**: Called on load to setup keybindings or initialize custom logic. It receives a **configuration table** containing:
+  * **`get_mode`**: A **getter function** that returns the current `custom_subtitle_filter_mode`, ensuring your script stay in sync with profile switches.
+
+### Configuration
+
+You can control the filter's behavior via `subs2srs.conf` and its profiles:
+
+* **`custom_subtitle_filter_mode`**: A string accessible via `config.get_mode()` in `init`. Use this to dynamically toggle or change filtering logic when switching profiles—for example, set it to `japanese` in your JP profile and `none` in others.
+
+### Using the Example Script
+
+An [example script](./.github/RELEASE/custom_subtitle_filter_example.lua) is available within the repository.
+
+This script is designed to extract Japanese lines from bilingual subtitles. While originally tailored for **Japanese/Chinese** pairs, it works for any language combined with Japanese because it identifies lines based on the presence of **Kana**.
+
+To use it, copy the example's logic into your `custom_subtitle_filter.lua` and modify it to suit your workflow.
 
 ## Hacking
 
@@ -490,10 +665,4 @@ these links may help.
 
 * https://mpv.io/manual/master/#lua-scripting
 * https://github.com/mpv-player/mpv/blob/master/player/lua/defaults.lua
-* https://github.com/SenneH/mpv2anki
-* https://github.com/kelciour/mpv-scripts/blob/master/subs2srs.lua
-* https://pastebin.com/M2gBksHT
-* https://pastebin.com/NBudhMUk
-* https://pastebin.com/W5YV1A9q
-* https://github.com/ayuryshev/subs2srs
 * https://github.com/erjiang/subs2srs

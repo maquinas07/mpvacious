@@ -1,5 +1,10 @@
 .idea
 .vscode
-/.github/RELEASE/*.zip
-/.github/RELEASE/*.html
+*.zip
+*.html
 *TODO*
+
+.github/RELEASE/*.conf
+
+/*.md
+!/README.md
